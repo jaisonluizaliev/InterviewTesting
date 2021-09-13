@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { baseURL, ts, publicKey, hash, limit } from "../../services/api-fetch";
+import {
+  StyledDiv,
+  StyledImg,
+  StyledInput,
+  StyledLabel,
+  StyledLi,
+  StyledMain,
+  StyledParagraph,
+  StyledTitle,
+  StyledUl,
+} from "./styles.jsx";
 
 function View() {
   const [data, setData] = useState([]);
@@ -12,7 +23,7 @@ function View() {
     try {
       const response = await fetch(
         `${baseURL}?limit=${limit}&ts=${ts}${nameStartWith}&apikey=${publicKey}&hash=${hash}`
-      );
+      );                                      
       const parsed = await response.json();
       setData(parsed.data.results);
     } catch (e) {
@@ -24,7 +35,7 @@ function View() {
     getApi();
     // eslint-disable-next-line
   }, [search]);
-
+                                                                         
   if (!data) {
     return <>Carregando...</>;
   }
@@ -35,34 +46,38 @@ function View() {
   }
 
   return (
-    <>
-      <label htmlFor="search">
-        <p>Procure seu heroi</p>
+    <main>
+      <StyledLabel htmlFor="search">
+        <StyledParagraph>Procure seu heroi</StyledParagraph>
 
         {/* <button type="button" onClick={/*addHero*}>adicione heroi</button> */}
-        <input id="search" type="text" onChange={onChangeSearch} />
-      </label>
-      <ul>
-        {data.map((comic) => (
-          <li key={comic.id}>
-            <h4>{comic.name}</h4>
-            <img
-              width={100}
-              src={`${comic.thumbnail.path}.${comic.thumbnail.extension}`}
-              alt=""
-            />
-            <Link
-              onClick={() => {
-                console.log(comic.id);
-              }}
-              to={`/details-hero/${comic.id}`}
-            >
-              Mais Detalhes
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </>
+        <StyledInput id="search" type="text" onChange={onChangeSearch} />
+      </StyledLabel>
+      <StyledMain>
+        <StyledUl>
+          {data.map((comic) => (
+            <StyledLi key={comic.id}>
+              <StyledImg
+                width={100}
+                src={`${comic.thumbnail.path}.${comic.thumbnail.extension}`}
+                alt=""
+              />
+              <StyledDiv>
+                <StyledTitle>{comic.name}</StyledTitle>
+                <Link
+                  onClick={() => {
+                    console.log(comic.id);
+                  }}
+                  to={`/details-hero/${comic.id}`}
+                >
+                  Mais Detalhes
+                </Link>
+              </StyledDiv>
+            </StyledLi>
+          ))}
+        </StyledUl>
+      </StyledMain>
+    </main>
   );
 }
 

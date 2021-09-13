@@ -1,8 +1,8 @@
 import React from 'react';
-import Detail from '../../components/View/Detail/Detail';
+import Details from '../../components/Details/Details';
 
 function PagesDetails() {
-  return <Detail />
+  return <Details />
 }
 
 export default PagesDetails;

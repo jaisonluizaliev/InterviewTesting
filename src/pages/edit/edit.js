@@ -1,8 +1,9 @@
 import React from 'react';
-import Edit from '../../components/View/Edit/Edit';
+import EditForm from '../../components/Edit/Edit';
+
 
 function PagesEdit() {
-  return <Edit/>
+  return <EditForm/>
 }
 
 export default PagesEdit;

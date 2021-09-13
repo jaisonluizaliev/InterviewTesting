@@ -13,7 +13,7 @@ export const GlobalStyle = createGlobalStyle`
   html, body {
     font-size: 100%;
     font-family: 'Noto Sans HK', sans-serif;
-    /* ; */
+    background: #022e67;
   }
   
   @media (min-width: 600px) {
