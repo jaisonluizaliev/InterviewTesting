@@ -23,7 +23,7 @@ const Root = () => {
         <Switch>
           <Route path='/edit/:id' component={PagesEdit} />
           <Route path='/details-hero/:id' component={PagesDetails} />
-          <Route path='/saved-heroes/:id' component={pagesSavedHeroes}/>
+          <Route path='/saved-heroes' component={pagesSavedHeroes}/>
           <Route path='/' component={PagesView} />
         </Switch>
       </Container>

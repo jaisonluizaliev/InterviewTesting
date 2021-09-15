@@ -5,17 +5,11 @@ import { StyledForm } from "./styles";
 import { baseURL, ts, publicKey, hash } from "../../services/api-fetch";
 
 function Edit() {
-  const [values, setValues] = useState([
-    {
-      title: "",
-      image: ""
-    }
-  ]);
+  const [heroes, setHeroes] = useState(null);
 
   const { id } = useParams();
   const history = useHistory()
 
-  const [heroes, setHeroes] = useState(null);
 
   async function getApiById() {
     try {
@@ -23,7 +17,14 @@ function Edit() {
         `${baseURL}/${id}?&ts=${ts}&apikey=${publicKey}&hash=${hash}`
       );
       const parsed = await response.json();
-      setHeroes(parsed.data.results[0]);
+      
+      setHeroes({
+        name: parsed.data.results[0].name,
+        id: parsed.data.results[0].id,
+        image: `${parsed.data.results[0].thumbnail.path}.${parsed.data.results[0].thumbnail.extension} `,
+      });
+
+      console.log(heroes)
     } catch (e) {
       console.error(e);
     }
@@ -35,24 +36,32 @@ function Edit() {
   }, []);
 
   function onChange(ev) {
-     const { name, value } = ev.target;
+    const { name, value } = ev.target;
 
-    setValues({ ...values, [name]: value });
+    console.log({"name": name,"value": value})
+
+    setHeroes({ ...heroes, [name]: value });
   }
 
   
   function onSubmit(ev) {
     ev.preventDefault();
+    if(localStorage.length === 0) {
+      //console.log('ta vazio')
+      localStorage.setItem('heroesApp/hero', JSON.stringify([]))
+    } else {
+      const heroesSaved = JSON.parse(localStorage.getItem('heroesApp/hero'))
+      
+      if(heroes) {
+        localStorage.setItem('heroesApp/hero', JSON.stringify([...heroesSaved, heroes]));
+        history.push('/saved-heroes');
+      }
+      //console.log(heroesSaved)
+    }
     
-    // if(localStorage.length === 0) {
-    //   localStorage.setItem("@heroes-app/myheroes", JSON.stringify([]));
-    // }
-    //ver aula maik brito sobre set e get
-    // localStorage.setItem('@heroes-app/myheroes', JSON.stringify()) 
-    // //localStorage.setItem('@heroes-app/myheroes', JSON.stringify(...values));
-    
-    
-    // // history.push(`/saved-heroes/${id}`);
+    // console.log(localStorage.setItem('isso', JSON.stringify([heroes, heroes])))
+    // console.log(localStorage.setItem("isto", JSON.stringify([heroes])));
+
   }
   //console.log(values)
   if (!heroes) {
@@ -62,24 +71,24 @@ function Edit() {
   return (
     <StyledMain>
       <StyledForm onSubmit={onSubmit}>
-        <label htmlFor="title">
+        <label htmlFor="name">
           <p>Titulo</p>
           <input
             type="text"
-            id="title"
-            name="title"
+            id="name"
+            name="name"
             onChange={onChange}
-            value={values.name}
+            value={heroes.name}
           />
         </label>
-        <label htmlFor="image">
+        <label htmlFor={heroes.thumbnail}>
           <p>Imagem (URL)</p>
           <input
             type="text"
             id="image"
             name="image"
             onChange={onChange}
-            value={values.image}
+            value={heroes.image}
           />
         </label>
         <div>

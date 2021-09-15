@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { baseURL, ts, publicKey, hash } from "../../services/api-fetch";
 import {
   StyledDiv,
   StyledImg,
@@ -12,42 +10,37 @@ import {
 
 function SavedHeroes() {
   const [dataSaved, setDataSaved] = useState([]);
-  const [heroes, setHeroes] = useState(null);
+  
+  
 
-  const { id } = useParams();
-
-  async function getApiById() {
+  async function getStorageData() {
     try {
-      const response = await fetch(
-        `${baseURL}/${id}?&ts=${ts}&apikey=${publicKey}&hash=${hash}`
-      );
-      const parsed = await response.json();
-      setHeroes(parsed.data.results[0]);
-      //console.log(heroes);
-      const dataParsed = JSON.parse(
-        localStorage.getItem(`@heroes-app/myheroes`)
-      );
+      
+      const dataParsed = JSON.parse(localStorage.getItem("heroesApp/hero"));
       //console.log(dataParsed.values.title)
-      setDataSaved([{...dataParsed}]);
+      setDataSaved(dataParsed);
+      console.log(dataSaved)
     } catch (e) {
       console.error(e);
     }
   }
 
   useEffect(() => {
-    getApiById();
+    getStorageData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
 
 
   return (
     <StyledMain>
       <StyledUl>
-        {dataSaved.map((comic, index) => (
+        {dataSaved && dataSaved.map((comic, index) => (
           <StyledLi key={index}>
             <StyledImg width={100} src={comic.image} alt="" />
             <StyledDiv>
-              <StyledTitle>{comic.title}</StyledTitle>
+              <StyledTitle>{comic.name}</StyledTitle>
             </StyledDiv>
           </StyledLi>
         ))}
