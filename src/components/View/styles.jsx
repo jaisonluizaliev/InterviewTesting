@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const StyledMain = styled.section`
   background-color: #e93339;
-  padding: 90px 45px 90px  ;
+  padding: 10px 45px 90px  ;
   border-radius: 4px;
 `;
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { baseURL, ts, publicKey, hash, limit } from "../../services/api-fetch";
+import { useSelector, useDispatch } from "react-redux";
 import {
   StyledDiv,
   StyledImg,
@@ -11,73 +10,63 @@ import {
   StyledParagraph,
   StyledTitle,
   StyledUl,
-} from "./styles.jsx";
+} from "../View/styles";
+import { fetchHeroes } from "../../store/actions/asyncData.action";
+import Loading from "../UI/Loading/Loading";
+import { Link } from "react-router-dom";
 
 function View() {
-  const [data, setData] = useState([]);
-  const [search, setSearch] = useState(null);
+  const loading = useSelector((state) => state.heroesReducer.loading);
+  //const error = useSelector((state) => state.heroesReducer.error);
+  const data = useSelector((state) => state.heroesReducer.heroes);
+  const dispatch = useDispatch();
 
-  const nameStartWith = !search ? "" : `&nameStartsWith=${search}`;
+  const [search, setSearch] = useState("");
 
-  async function getApi() {
-    try {
-      const response = await fetch(
-        `${baseURL}?limit=${limit}&ts=${ts}${nameStartWith}&apikey=${publicKey}&hash=${hash}`
-      );                                      
-      const parsed = await response.json();
-      setData(parsed.data.results);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  useEffect(() => {
-    getApi();
-    // eslint-disable-next-line
-  }, [search]);
-                                                                         
-  if (!data) {
-    return <>Carregando...</>;
-  }
-
-  function onChangeSearch(ev) {
-    //console.log(ev.target.value)
+  function onChange(ev) {
     setSearch(ev.target.value);
   }
 
+  useEffect(() => {
+    dispatch(fetchHeroes(search));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
   return (
-    <main>
+    <StyledMain>
       <StyledLabel htmlFor="search">
         <StyledParagraph>Procure seu heroi</StyledParagraph>
-
-        {/* <button type="button" onClick={/*addHero*}>adicione heroi</button> */}
-        <StyledInput id="search" type="text" onChange={onChangeSearch} />
+        <StyledInput id="search" type="text" onChange={onChange} />
       </StyledLabel>
-      <StyledMain>
-        <StyledUl>
-          {data.map((comic) => (
-            <StyledLi key={comic.id}>
+      <StyledUl>
+        {loading ? (
+          <Loading>Carregando...</Loading>
+        ) : (
+          data.length === undefined &&
+          data.results.length >= 0 &&
+          data.results.map((heroes) => (
+            <StyledLi key={heroes.id}>
               <StyledImg
                 width={100}
-                src={`${comic.thumbnail.path}.${comic.thumbnail.extension}`}
-                alt=""
+                src={`${heroes.thumbnail.path}.${heroes.thumbnail.extension}`}
+                alt={heroes.name}
               />
               <StyledDiv>
-                <StyledTitle>{comic.name}</StyledTitle>
+                <StyledTitle>{heroes.name}</StyledTitle>
                 <Link
                   onClick={() => {
-                    console.log(comic.id);
+                    console.log(heroes.id);
                   }}
-                  to={`/details-hero/${comic.id}`}
+                  to={`/details-hero/${heroes.id}`}
                 >
                   Mais Detalhes
                 </Link>
               </StyledDiv>
             </StyledLi>
-          ))}
-        </StyledUl>
-      </StyledMain>
-    </main>
+          ))
+        )}
+      </StyledUl>
+    </StyledMain>
   );
 }
 
