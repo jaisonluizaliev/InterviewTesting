@@ -26,4 +26,6 @@ yarn-error.log*
 onde-parei
 comofazer
 
-src/store
+.vscode
+
+src/components/Test
