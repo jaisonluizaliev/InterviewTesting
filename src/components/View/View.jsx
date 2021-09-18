@@ -40,7 +40,7 @@ function View() {
       </StyledLabel>
       <StyledUl>
         {loading ? (
-          <Loading>Carregando...</Loading>
+          <Loading/>
         ) : (
           data.length === undefined &&
           data.results.length >= 0 &&

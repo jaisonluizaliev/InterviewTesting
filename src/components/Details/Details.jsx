@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { baseURL, ts, publicKey, hash } from "../../services/api-fetch";
 import { StyledMain } from "../View/styles";
 import {
   StyledUlDetails,
@@ -14,46 +13,46 @@ import {
   StyledDivLinkDetails,
   StyledSeriesTitleDetails,
 } from "./styles";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { fetchHeroesById } from "../../store/actions/asyncData.action";
+import Loading from "../UI/Loading/Loading";
 
 function Details() {
-  const [hero, setHero] = useState(null);
+  const heroById = useSelector((state) => state.heroesReducer.heroes);
+  const loading = useSelector((state) => state.heroesReducer.loading);
+  const dispatch = useDispatch();
   const { id } = useParams();
-  //const NId = Number(id)
 
-  async function getApiById() {
-    try {
-      const response = await fetch(
-        `${baseURL}/${id}?&ts=${ts}&apikey=${publicKey}&hash=${hash}`
-      );
-      const parsed = await response.json();
-      setHero(parsed.data.results[0]);
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  
 
   useEffect(() => {
-    getApiById();
+    dispatch(fetchHeroesById(id));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
-  if (!hero) return <>...Carregando...</>;
+  if (loading) {
+    return (
+      <StyledMain>
+        <Loading>...Carregando...</Loading>
+      </StyledMain>
+    );
+  }
 
   return (
     <StyledMain>
       <StyledUlDetails>
-        {
-          <StyledListDetails key={hero.id}>
-            <StyledTitleDetails>{hero.name}</StyledTitleDetails>
+        {heroById.length === undefined &&  (
+          <StyledListDetails key={heroById.results[0].id}>
+            <StyledTitleDetails>{heroById.results[0].name}</StyledTitleDetails>
             <StyledDivDetails>
               <StyledImgDetails
-                src={`${hero.thumbnail.path}.${hero.thumbnail.extension}`}
-                alt=""
+                src={`${heroById.results[0].thumbnail.path}.${heroById.results[0].thumbnail.extension}`}
+                alt={heroById.results[0].name}
               />
               <StyledUlSeriesDetails>
                 <StyledSeriesTitleDetails>Series</StyledSeriesTitleDetails>
-                {hero.series.items.map((item) => (
+                {heroById.results[0].series.items.map((item) => (
                   <StyledListSeriesDetails key={item.name}>
                     {item.name}
                   </StyledListSeriesDetails>
@@ -61,10 +60,10 @@ function Details() {
               </StyledUlSeriesDetails>
             </StyledDivDetails>
             <StyledDivLinkDetails>
-              <Link to={`/edit/${hero.id}`}> Editar </Link>
+              <Link to={`/edit/${heroById.results[0].id}`}> Editar </Link>
             </StyledDivLinkDetails>
           </StyledListDetails>
-        }
+        )}
       </StyledUlDetails>
     </StyledMain>
   );

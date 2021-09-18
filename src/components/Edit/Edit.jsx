@@ -12,7 +12,11 @@ import {
 } from "./styles";
 import { baseURL, ts, publicKey, hash } from "../../services/api-fetch";
 
+
+
+
 function Edit() {
+
   const [heroes, setHeroes] = useState(null);
 
   const { id } = useParams();
